@@ -20,7 +20,7 @@ function lampItemTmpl(cnt, data) {
         </td>
         <td style="display:none;">${data.last_activated_time}</td>
         <td>
-            <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+            <a class="edit" title="Edit" data-toggle="tooltip" onclick="reqChangeAddress(${data.id})"><i class="material-icons">&#xE254;</i></a>
             <a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
         </td>
         </tr>
@@ -64,7 +64,15 @@ function reqAddLamp() {
     let dialog = document.getElementById("Dialog");
 
     dialog.style.display = "block";
+}
 
+function reqChangeAddress(id) {
+    // console.log("id: " + id)
+    ///var id = (Math.random() + 1).toString(36).substring(4);
+    document.getElementById("dialog-id").innerHTML=id;
+
+    let dialog = document.getElementById("Dialog");
+    dialog.style.display = "block";
 }
 
 function reqChangeLamp(id, new_status) {
@@ -99,7 +107,7 @@ const dialogCancel = (event) => {
 }
 const dialogSubmit = (event) => {
     let dialog = document.getElementById("Dialog");
-    let input = document.getElementById("dialog-input");
+    let input = document.getElementById("dialog-id");
     let id = input.value;
     let type = document.getElementById("dialog-type").value;
     let address = document.getElementById("dialog-address").value;
@@ -132,15 +140,6 @@ reqUpdateLampTable();
 $(document).ready(function () {
     setInterval(reqUpdateLampTable, 5000);
     setInterval(updateUpTime, 1000);
-
-    $(document).on("click", ".edit", function () {
-        $(this).parents("tr").find("td:not(:last-child)").each(function () {
-            var dialog = $(this).getElementById("Dialog");
-            dialog.showModal();
-        });
-        $(this).parents("tr").find(".add, .edit").toggle();
-        $(".add-new").attr("disabled", "disabled");
-    });
 
     // get modal dialog
     var modal = document.getElementById('Dialog');
