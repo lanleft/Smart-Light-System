@@ -60,7 +60,10 @@ def add():
         res = {"success": True}
         res.update(lampDict[id])
     else:
-        res = {"success": False, "msg": "id existed"}
+        lampDict[id]['type'] = type_value
+        lampDict[id]['address'] = address_value
+        res = {"success": True, "msg": "id existed, update type and address"}
+        res.update(lampDict[id])
     return jsonify(res)
 
 @app.route("/api/alert", methods=["POST"])
@@ -178,6 +181,64 @@ def info_all():
         item.update({"id": key})
         res.append(item)
     return jsonify(res)
+
+@app.route("/api/lamp", methods=["POST"])
+def iot_change():
+    # print ("testt")
+    form = request.get_json()
+    # print (form)
+
+    id, new_status = form["id"], form["status"]
+    if id not in lampDict:
+        lampDict[id] = dict(
+            status="off",
+            last_activated_time=0,
+            prev_used_time=0,
+            created_date=int(datetime.datetime.now().timestamp()),
+            type="",
+            address=""
+        )
+        lampDict[id]["status"] = "on"
+        lampDict[id]["last_activated_time"] = int(datetime.datetime.now().timestamp())
+        lampChange = {"id": id, "status" : "on"}
+        res = {
+            "success": True,
+            "status": lampDict[id]["status"],
+            "last_activated_time": lampDict[id]["last_activated_time"],
+            "prev_used_time": lampDict[id]["prev_used_time"],
+        }
+        res.update(lampDict[id])
+        return jsonify(res)
+
+    if not new_status or new_status not in ["on", "off"]:
+        res = {"success": False, "msg": "unknown status"}
+        return jsonify(res)
+    if new_status == lampDict[id]["status"]:
+        res = {"success": False, "msg": f"already {new_status}"}
+        return jsonify(res)
+
+    if new_status == "on":
+        lampDict[id]["status"] = "on"
+        lampDict[id]["last_activated_time"] = int(datetime.datetime.now().timestamp())
+        lampChange = {"id": id, "status" : "on"}
+    
+    else:
+        lampDict[id]["status"] = "off"
+        lampDict[id]["prev_used_time"] += (
+            int(datetime.datetime.now().timestamp())
+            - lampDict[id]["last_activated_time"]
+        )
+        lampDict[id]["last_activated_time"] = 0
+        lampChange = {"id": id, "status" : "off"}
+
+    res = {
+        "success": True,
+        "status": lampDict[id]["status"],
+        "last_activated_time": lampDict[id]["last_activated_time"],
+        "prev_used_time": lampDict[id]["prev_used_time"],
+    }
+    return jsonify(res)
+
 
 
 if __name__ == "__main__":
