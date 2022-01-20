@@ -21,7 +21,7 @@ function lampItemTmpl(cnt, data) {
         <td style="display:none;">${data.last_activated_time}</td>
         <td>
             <a class="edit" title="Edit" data-toggle="tooltip" onclick="reqChangeAddress(${data.id})"><i class="material-icons">&#xE254;</i></a>
-            <a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
+            <a class="delete" title="Delete" data-toggle="tooltip" onclick="reqDelete(${data.id})"><i class="material-icons">&#xE872;</i></a>
         </td>
         </tr>
     `).trigger("create");
@@ -37,6 +37,25 @@ function updateUpTime() {
         if (isUp)
             upTimeCol.html(moment.unix(lastActivatedTime).toNow());
     })
+}
+
+function reqDelete(id) {
+    $.ajax({
+        type: 'POST',
+        url: `/api/lamp/delete`,
+        contentType: 'application/json',
+        data: JSON.stringify({
+            'id': id
+        }),
+        dataType: "json",
+        success: function (data) {
+            if (data != null) {
+                if (data.success) {
+                    reqUpdateLampTable();
+                }
+            } else {}
+        }
+    });
 }
 
 function reqUpdateLampTable() {
@@ -61,6 +80,8 @@ function reqUpdateLampTable() {
 
 function reqAddLamp() {
     ///var id = (Math.random() + 1).toString(36).substring(4);
+    document.getElementById("dialog-id").setAttribute("placeholder", "1234");
+    
     let dialog = document.getElementById("Dialog");
 
     dialog.style.display = "block";
@@ -69,7 +90,10 @@ function reqAddLamp() {
 function reqChangeAddress(id) {
     // console.log("id: " + id)
     ///var id = (Math.random() + 1).toString(36).substring(4);
-    document.getElementById("dialog-id").innerHTML=id;
+    document.getElementById("dialog-id").setAttribute("value", id);
+    // document.getElementById("dialog-type").setAttribute("value", type);
+    // document.getElementById("dialog-address").setAttribute("value", address);
+    // document.getElementById("dialog-id").innerHTML=id;
 
     let dialog = document.getElementById("Dialog");
     dialog.style.display = "block";

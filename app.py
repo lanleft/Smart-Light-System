@@ -168,7 +168,7 @@ def info(id):
         "success": True,
         "status": lampDict[id]["status"],
         "last_activated_time": lampDict[id]["last_activated_time"],
-        "prev_used_time": lampDict[id]["prev_used_time"],
+        "prev_used_time": lampDict[id]["prev_used_time"]
     }
     return jsonify(res)
 
@@ -180,6 +180,29 @@ def info_all():
         item = lampDict[key]
         item.update({"id": key})
         res.append(item)
+    # print (res)
+    return jsonify(res)
+
+@app.route("/api/lamp/delete", methods=["POST"])
+def delete_lamp():
+    form = request.get_json()
+    id = str(form["id"])
+    # print (form)
+    # print(lampDict)
+    if id not in lampDict:
+        res = {
+            "success": False,
+            "msg": "id not exist"
+        }
+        # print (res)
+        return jsonify(res)
+    # item = lampDict[id]
+    del lampDict[id]
+    res = {
+        "success": True,
+        "msg": f"delete {id} success"
+    }
+    # print (res)
     return jsonify(res)
 
 @app.route("/api/lamp", methods=["POST"])
