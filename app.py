@@ -1,3 +1,6 @@
+from pickle import FALSE, TRUE
+
+from numpy import append
 from flask import Flask, render_template, url_for, request, jsonify
 import json
 import datetime
@@ -9,7 +12,7 @@ from email.message import EmailMessage
 app = Flask(__name__, static_url_path="/static")
 lampDict = dict()
 TIME_MAX = 6000
-url_iots = ["http://192.168.1.48"]
+url_iots = []
 
 """
 struct lamp:
@@ -36,7 +39,11 @@ def setup():
     form = request.get_json()
     # global url_iot
     url_iot = "http://"+form["IP"]
-    url_iots.append(url_iot)
+    ok = TRUE
+    for current in url_iots:
+        if(current == url_iot) :
+            ok = FALSE
+    if(ok==TRUE): url_iots.append(url_iot)
     res = {"IP":form["IP"], "success":True}
     return jsonify(res)
 
@@ -74,7 +81,7 @@ def FireAlert():
     alertMsg = form['alert']
 
     if alertMsg=="True":
-        msg = f"Dear lil chủ nhà,\nALO CHÁY NHÀ MÀY ƠI, CHÁY NHÀ KÌA!!!  \n\nP/S:Thêm nữa đừng reply email này, vì không ai giúp mày đâu...\n\nPeace!!!\nFrom: Hệ thống đèn yêu quý của mày."
+        msg = f"Alert: Your house is on fire!"
         res_mail = SendMail("kubin2712@gmail.com", "Fire Alert", msg)
         res = {"success": res_mail}
     else:
@@ -82,7 +89,6 @@ def FireAlert():
     return jsonify(res)
 
 def SendMail(to_email, subject, message):
-
     # import smtplib
     from_email="anna6553765537@gmail.com"
 
@@ -115,7 +121,7 @@ def change():
     # if(url_iot == "test"):
     #     res = {"success": False, "msg": "URL does not exist"}
     #     return jsonify(res)
-
+    
     id, new_status = form["id"], form["new_status"]
     if id not in lampDict:
         res = {"success": False, "msg": "id not exist"}
@@ -133,8 +139,15 @@ def change():
         lampDict[id]["last_activated_time"] = int(datetime.datetime.now().timestamp())
         lampChange = {"id": id, "status" : "on"}
         for url_iot in url_iots:
-            x = requests.post(url_iot+"/api/config/lamp", json=lampChange) # --> if have iot url
-            print(x)
+            try:
+                x = requests.post(url_iot+"/api/config/lamp", json=lampChange, timeout=2.0) # --> if have iot url
+                print(x)
+            except requests.Timeout:
+                print("Connection to "+url_iot+" timed out!")
+                pass
+            except requests.ConnectionError:
+                print("Connection error!")
+                pass
     else:
         lampDict[id]["status"] = "off"
         lampDict[id]["prev_used_time"] += (
@@ -144,8 +157,16 @@ def change():
         lampDict[id]["last_activated_time"] = 0
         lampChange = {"id": id, "status" : "off"}
         for url_iot in url_iots:
-            x = requests.post(url_iot+"/api/config/lamp", json=lampChange)   # --> if have iot url 
-            print(x)
+            try:
+                x = requests.post(url_iot+"/api/config/lamp", json=lampChange, timeout=2.0) # --> if have iot url
+                print(x)
+            except requests.Timeout:
+                print("Connection to "+url_iot+" timed out!")
+                pass
+            except requests.ConnectionError:
+                print("Connection error!")
+                pass
+    
     res = {
         "URL" : url_iots,
         "success": True,
@@ -207,11 +228,13 @@ def delete_lamp():
 
 @app.route("/api/lamp", methods=["POST"])
 def iot_change():
-    # print ("testt")
+    
     form = request.get_json()
     # print (form)
 
     id, new_status = form["id"], form["status"]
+    print(id)
+    print(new_status)
     if id not in lampDict:
         lampDict[id] = dict(
             status="off",
@@ -221,7 +244,7 @@ def iot_change():
             type="",
             address=""
         )
-        lampDict[id]["status"] = "on"
+        lampDict[id]["status"] = new_status
         lampDict[id]["last_activated_time"] = int(datetime.datetime.now().timestamp())
         lampChange = {"id": id, "status" : "on"}
         res = {

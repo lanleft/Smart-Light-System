@@ -1,16 +1,25 @@
+
+html, body{
+    min-width: 410px;
+    margin: 0;
+    padding:0;
+    min-height: 100%;
+    overflow: auto;
+}
 body {
+    height: 100vh;
     color: #566787;
     background: #f5f5f5;
     font-family: 'Varela Round', sans-serif;
     font-size: 13px;
+    top: 0%;
+    left: 0%;
 }
 
 .table-responsive {
-    margin: 30px 0;
 }
 
 .table-wrapper {
-    min-width: 1000px;
     background: #fff;
     padding: 20px 25px;
     border-radius: 3px;
@@ -18,11 +27,9 @@ body {
 }
 
 .table-title {
-    padding-bottom: 15px;
     background: #299be4;
     color: #fff;
     padding: 16px 30px;
-    margin: -20px -25px 10px;
     border-radius: 3px 3px 0 0;
 }
 
@@ -153,7 +160,6 @@ table.table td i {
 .form-switch.form-switch-md {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-    /* JUST FOR STYLING PURPOSE */
 }
 
 .form-switch.form-switch-md .form-check-input {
@@ -204,8 +210,66 @@ table.table td i {
     background-color: pink;
 }
 
-.dialog-button:nth-child(4) {
+.dialog-button:nth-child(5) {
     float: right;
     color: white;
     background-color: gray;
+}
+
+.table-title-row > div {
+    display: inline-block;
+}
+.table-title-row > div:nth-child(1)
+{
+    width: 300px;
+}
+.table-title-row > div:nth-child(2)
+{
+    width: 150px;
+    float: right;
+}
+
+@media only screen and (max-width: 850px){
+
+    .table-title{
+        width: 100%;
+    }
+    .table-responsive{
+        margin: auto;
+        width: 100%;
+    }
+    table.table tr th:nth-child(1), 
+    table.table tr th:nth-child(3),
+    table.table tr th:nth-child(5),
+    table.table tr th:nth-child(6),
+    table.table tr th:nth-child(7),
+    table.table tr td:nth-child(1), 
+    table.table tr td:nth-child(3),
+    table.table tr td:nth-child(5),
+    table.table tr td:nth-child(6),
+    table.table tr td:nth-child(7)
+    {
+        display: none;
+    }
+
+}
+
+@media only screen and (max-width: 560px){
+
+    .table-title-row > div:nth-child(1)
+    {
+        width: 20%;
+    }
+    .table-title-row > div:nth-child(2)
+    {
+        margin-top: 18px;
+    }
+    .table-title{
+        width: 100%;
+    }
+    .table-responsive{
+        margin: auto;
+        width: 100%;
+    }
+
 }
