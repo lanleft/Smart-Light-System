@@ -59,9 +59,14 @@ function reqDelete(id) {
 }
 
 function reqUpdateLampTable() {
+    var user_id = localStorage.getItem('user_id')
     $.ajax({
-        type: 'GET',
-        url: '/api/lamp/all',
+        type: 'POST',
+        url: `/api/lamp/all`,
+        contentType: 'application/json',
+        data: JSON.stringify({
+            'user_id': user_id
+        }),
         dataType: "json",
         success: function (data) {
             if (data != null) {
@@ -103,13 +108,15 @@ function reqChangeAddress(id) {
 }
 
 function reqChangeLamp(id, new_status) {
+    var user_id = localStorage.getItem('user_id')
     $.ajax({
         type: 'PUT',
         url: `/api/lamp/change`,
         contentType: 'application/json',
         data: JSON.stringify({
             'id': id,
-            'new_status': new_status
+            'new_status': new_status,
+            'user_id': user_id
         }),
         dataType: "json",
         success: function (data) {
@@ -138,13 +145,15 @@ const dialogSubmit = (event) => {
     let id = input.value;
     let type = document.getElementById("dialog-type").value;
     let address = document.getElementById("dialog-address").value;
+    var user_id = localStorage.getItem("user_id");
     $.ajax({
         type: 'POST',
         url: `/api/lamp/add`,
         data: JSON.stringify({
             'id': id,
             'type': type,
-            'address': address
+            'address': address,
+            'user_id': user_id
         }),
         contentType: 'application/json',
         dataType: "json",

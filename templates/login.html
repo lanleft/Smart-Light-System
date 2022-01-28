@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Login</title>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style_login.css') }}">
+
+</head>
+<!------ Include the above in your HEAD tag ---------->
+
+<body>
+  <div class="wrapper fadeInDown">
+    <div id="formContent">
+      <!-- Tabs Titles -->
+
+      <h3 style="text-align:center" class="login_form">Smart Light System</h3>
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="return false">
+        <input type="text" id="username" class="fadeIn second" name="username" placeholder="username">
+        <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+        <input type="submit" id ="login" class="fadeIn fourth" value="Log In">
+      </form>
+  
+    </div>
+  </div>
+
+</body>
+<script src="{{ url_for('static',filename='login.js') }}"> </script>
+
+</html>

@@ -11,6 +11,7 @@ from email.message import EmailMessage
 
 app = Flask(__name__, static_url_path="/static")
 lampDict = dict()
+homes = [[] for _ in range(10)]
 TIME_MAX = 6000
 url_iots = []
 
@@ -22,8 +23,15 @@ struct lamp:
     prev_used_time=0,
     created_date=int(datetime.datetime.now().timestamp()),
 }
+home {
+    user_id,
+    username,
+    password
+}
 """
-
+for i in range(10):
+    tmp = "test"+str(i)
+    homes[i] = ["SLS"+str(i), tmp, tmp]
 
 @app.template_filter("from_timestamp")
 def from_timestamp(timestamp, timeformat):
@@ -31,6 +39,32 @@ def from_timestamp(timestamp, timeformat):
 
 
 @app.route("/", methods=["GET"])
+def login_html():
+    return render_template("login.html")
+'''
+@app.route("/", methods=["GET"])
+def home():
+    return render_template("index_1.html")
+'''
+@app.route("/api/login/", methods = ["POST"])
+def login():
+    form = request.get_json()
+    username = form["username"]
+    password = form["password"]
+    for home in homes:
+        if username==home[1] and password==home[2]:
+            res = {
+                "success":True,
+                "user_id": home[0]
+            }
+            return jsonify(res)
+    res = {
+        "success": False,
+        "msg": "username not exit"
+    }
+    return jsonify(res)
+
+@app.route("/home", methods=["GET"])
 def home():
     return render_template("index_1.html")
 
@@ -55,6 +89,7 @@ def add():
     id = html.escape(form['id'])
     type_value = form['type']
     address_value = form['address']
+    user_id = form['user_id']
     if id not in lampDict:
         lampDict[id] = dict(
             status="off",
@@ -62,7 +97,8 @@ def add():
             prev_used_time=0,
             created_date=int(datetime.datetime.now().timestamp()),
             type=type_value,
-            address=address_value
+            address=address_value,
+            user_id=user_id
         )
         res = {"success": True}
         res.update(lampDict[id])
@@ -194,13 +230,16 @@ def info(id):
     return jsonify(res)
 
 
-@app.route("/api/lamp/all", methods=["GET"])
+@app.route("/api/lamp/all", methods=["POST"])
 def info_all():
+    form = request.get_json()
+    user_id = form["user_id"]
     res = []
     for key in lampDict:
         item = lampDict[key]
         item.update({"id": key})
-        res.append(item)
+        if item["user_id"]==user_id:
+            res.append(item)
     # print (res)
     return jsonify(res)
 
