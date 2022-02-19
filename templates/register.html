@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <!-- <link rel="stylesheet" href="/public/style.css"> -->
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style_reg.css') }}">
+</head>
+
+<body>
+
+      <form onsubmit="return false">
+        <h2>Sign Up</h2>
+        <p>
+          <label for="username" class="floatLabel"></label>
+          <input id="username" name="username" type="text" placeholder="username">
+        </p>
+        <p>
+          <label for="password" class="floatLabel"></label>
+          <input id="password" name="password" type="password" placeholder="password">
+        </p>
+        <p>
+          <label for="confirm_password" class="floatLabel"></label>
+          <input id="confirm_password" name="confirm_password" type="password" placeholder="confirm password">
+        </p>
+        <p>
+          <input type="submit" id="register" value="Create My Account">
+        </p>
+      </form>
+      <script src="{{ url_for('static',filename='register.js') }}"> </script>
+</body>
+
+</html>

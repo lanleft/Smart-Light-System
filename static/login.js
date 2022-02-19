@@ -21,9 +21,9 @@ async function fetchLogin(username, password) {
       var username = document.getElementById('username').value;
       var password = document.getElementById('password').value;
       getLogin(username, password).then(data => {
-        var status = data.status;
-        if (status != 200){
-          alert(data.body.data);
+        var success = data.body.success;
+        if (success != true){
+          alert('user not exist');
         } else {
           var user_id = data.body.user_id;
           localStorage.setItem('user_id', user_id);

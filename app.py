@@ -1,5 +1,6 @@
 from pickle import FALSE, TRUE
-
+import os
+from base64 import b64encode
 from numpy import append
 from flask import Flask, render_template, url_for, request, jsonify
 import json
@@ -29,14 +30,43 @@ home {
     password
 }
 """
-for i in range(10):
-    tmp = "test"+str(i)
-    homes[i] = ["SLS"+str(i), tmp, tmp]
+# for i in range(10):
+#     tmp = "test"+str(i)
+#     homes[i] = ["SLS"+str(i), tmp, tmp]
 
 @app.template_filter("from_timestamp")
 def from_timestamp(timestamp, timeformat):
     return datetime.datetime.fromtimestamp(timestamp).strftime(timeformat)
 
+@app.route("/register", methods=["GET"])
+def register_html():
+    return render_template("register.html")
+
+@app.route("/api/register/", methods=["POST"])
+def register():
+    form = request.get_json()
+    username = form["username"]
+    password = form["password"]
+
+    for home in homes:
+        if home != []:
+            if username==home[1]:
+                res = {
+                    'success': False,
+                    'msg': "user is existed"
+                }
+                return jsonify(res)
+    
+    ## add new user 
+    user_id = b64encode(os.urandom(16))[:9].decode()
+    # print (user_id)
+    homes.append([user_id, username, password])
+
+    res = {
+        'success': True,
+        'user_id': user_id
+    }
+    return jsonify(res)
 
 @app.route("/", methods=["GET"])
 def login_html():
@@ -52,12 +82,14 @@ def login():
     username = form["username"]
     password = form["password"]
     for home in homes:
-        if username==home[1] and password==home[2]:
-            res = {
-                "success":True,
-                "user_id": home[0]
-            }
-            return jsonify(res)
+        if home != []:
+            print (home)
+            if username==home[1] and password==home[2]:
+                res = {
+                    "success":True,
+                    "user_id": home[0]
+                }
+                return jsonify(res)
     res = {
         "success": False,
         "msg": "username not exit"
