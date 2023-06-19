@@ -150,7 +150,7 @@ def FireAlert():
 
     if alertMsg=="True":
         msg = f"Alert: Your house is on fire!"
-        res_mail = SendMail("kubin2712@gmail.com", "Fire Alert", msg)
+        res_mail = SendMail("xxxxxx@gmail.com", "Fire Alert", msg)
         res = {"success": res_mail}
     else:
         res = {"success": False}
@@ -158,7 +158,7 @@ def FireAlert():
 
 def SendMail(to_email, subject, message):
     # import smtplib
-    from_email="anna6553765537@gmail.com"
+    from_email="xxxx@gmail.com"
 
     msg = EmailMessage()
     msg['Subject'] = subject
@@ -171,7 +171,7 @@ def SendMail(to_email, subject, message):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(from_email, "12345678@Abc")  # user & password
+    server.login(from_email, "xxxx")  # user & password
     try:
         server.send_message(msg)
         server.quit()
